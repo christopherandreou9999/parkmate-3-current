@@ -24,6 +24,15 @@ export default function LoginSignup() {
         navigate('/search');
       }
     } else {
+      const hasDigit = /\d/.test(password);
+      const hasSpecialChar = /[!@#$%^&*]/.test(password);
+
+      if (!hasDigit || !hasSpecialChar) {
+        setError('Password must include at least one number and one special character.');
+        setLoading(false);
+        return;
+      }
+
       const { error } = await supabase.auth.signUp({ email, password });
       setLoading(false);
       if (error) {
@@ -81,6 +90,11 @@ export default function LoginSignup() {
                 className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
                 required
               />
+              {!isLogin && (
+                <p className="text-xs text-gray-500 mt-2">
+                  Password must include at least one number and one special character.
+                </p>
+              )}
             </div>
 
             {/* Error Message */}
