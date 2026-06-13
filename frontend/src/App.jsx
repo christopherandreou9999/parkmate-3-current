@@ -5,6 +5,7 @@ import Search from './pages/Search';
 import SpotDetails from './pages/SpotDetails';
 import BookAndPay from './pages/BookAndPay';
 import Confirmation from './pages/Confirmation';
+import Profile from './pages/Profile';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/spot/:id" element={<SpotDetails />} />
           <Route path="/book/:id" element={<BookAndPay />} />
           <Route path="/confirmation" element={<Confirmation />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </Router>
     </BookingProvider>

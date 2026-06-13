@@ -9,7 +9,32 @@ export default function Confirmation() {
 
   const spot = selectedSpot || MOCK_PARKING_SPOTS.find((s) => s.id === bookingData.spotId);
   const referenceNumber = `PM${Date.now().toString().slice(-8)}`;
-  const accessCode = 'A7K2M9';
+
+  // Calculate end time based on start time + duration
+  const calculateEndTime = (startTime, durationHours) => {
+    if (!startTime) return '';
+    const [hours, minutes] = startTime.split(':').map(Number);
+    const totalMinutes = hours * 60 + minutes + durationHours * 60;
+    const endHours = Math.floor(totalMinutes / 60) % 24;
+    const endMinutes = totalMinutes % 60;
+    const endHoursPadded = endHours.toString().padStart(2, '0');
+    const endMinutesPadded = endMinutes.toString().padStart(2, '0');
+
+    // Convert 24-hour to 12-hour format
+    const period = endHours >= 12 ? 'PM' : 'AM';
+    const displayHours = endHours % 12 || 12;
+    return `${displayHours}:${endMinutesPadded} ${period}`;
+  };
+
+  const startTimeFormatted = (() => {
+    if (!bookingData.startTime) return '';
+    const [hours, minutes] = bookingData.startTime.split(':').map(Number);
+    const period = hours >= 12 ? 'PM' : 'AM';
+    const displayHours = hours % 12 || 12;
+    return `${displayHours}:${minutes.toString().padStart(2, '0')} ${period}`;
+  })();
+
+  const endTime = calculateEndTime(bookingData.startTime, bookingData.duration);
 
   if (!bookingData.spotId) {
     return (
@@ -66,18 +91,9 @@ export default function Confirmation() {
                   Time
                 </p>
                 <p className="font-bold text-primary text-sm">
-                  {bookingData.startTime}
+                  {startTimeFormatted} - {endTime}
                 </p>
               </div>
-            </div>
-
-            <div>
-              <p className="text-xs text-gray-600 uppercase font-semibold">
-                Access Code
-              </p>
-              <p className="font-bold text-primary text-lg font-mono">
-                {accessCode}
-              </p>
             </div>
 
             <div className="pt-3 border-t border-border">

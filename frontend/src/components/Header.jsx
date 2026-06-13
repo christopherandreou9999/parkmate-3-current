@@ -13,9 +13,6 @@ export default function Header() {
           </Link>
 
           <nav className="flex items-center gap-4">
-            <Link to="/search" className="text-primary hover:text-accent transition">
-              Search
-            </Link>
             <Link to="/auth" className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-opacity-90 transition">
               Account
             </Link>

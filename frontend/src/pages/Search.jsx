@@ -7,10 +7,21 @@ import { MOCK_PARKING_SPOTS } from '../constants/mockData';
 export default function Search() {
   const { searchParams, setSearchParams } = useContext(BookingContext);
   const [showResults, setShowResults] = useState(false);
+  const [showAutocomplete, setShowAutocomplete] = useState(false);
+
+  const autocompleteOptions = ['2 Latrobe Street'];
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setSearchParams({ ...searchParams, [name]: value });
+    if (name === 'destination') {
+      setShowAutocomplete(value.length > 0);
+    }
+  };
+
+  const handleAutocompleteClick = (address) => {
+    setSearchParams({ ...searchParams, destination: address });
+    setShowAutocomplete(false);
   };
 
   const handleSearch = (e) => {
@@ -22,9 +33,8 @@ export default function Search() {
     <div className="min-h-screen bg-background pb-24">
       <div className="max-w-7xl mx-auto px-4 py-6">
         {/* Location Search Bar */}
-        <div className="mb-6">
+        <div className="mb-6 relative">
           <div className="flex items-center gap-2 px-4 py-3 bg-white border-2 border-primary rounded-lg">
-            <span className="text-xl">📍</span>
             <input
               type="text"
               name="destination"
@@ -34,18 +44,30 @@ export default function Search() {
               className="flex-1 outline-none text-gray-700"
             />
           </div>
+
+          {/* Autocomplete Dropdown */}
+          {showAutocomplete && (
+            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-border rounded-lg shadow-lg z-10">
+              {autocompleteOptions.map((address, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => handleAutocompleteClick(address)}
+                  className="w-full text-left px-4 py-2 hover:bg-background text-gray-700 first:rounded-t-lg last:rounded-b-lg"
+                >
+                  📍 {address}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Map Placeholder */}
-        <div className="mb-6 bg-gradient-to-br from-accent to-accent bg-opacity-20 rounded-lg h-48 flex items-center justify-center border-2 border-accent border-opacity-30 relative overflow-hidden">
-          <div className="text-center">
-            <p className="text-accent font-semibold">[Map View]</p>
-          </div>
-          {/* Dot markers */}
-          <div className="absolute top-8 left-8 w-3 h-3 bg-accent rounded-full"></div>
-          <div className="absolute top-20 right-12 w-3 h-3 bg-accent rounded-full"></div>
-          <div className="absolute bottom-12 left-1/4 w-3 h-3 bg-accent rounded-full"></div>
-          <div className="absolute bottom-8 right-20 w-3 h-3 bg-accent rounded-full"></div>
+        <div className="mb-6 bg-gray-300 rounded-lg h-48 overflow-hidden border-2 border-accent border-opacity-30">
+          <img
+            src="https://placehold.co/600x200/93C5FD/1B3A5C?text=Map+View"
+            alt="Map of Victoria, Australia"
+            className="w-full h-full object-cover"
+          />
         </div>
 
         {/* Search Filters */}
@@ -119,11 +141,13 @@ export default function Search() {
               {MOCK_PARKING_SPOTS.map((spot) => (
                 <Link key={spot.id} to={`/spot/${spot.id}`}>
                   <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition cursor-pointer h-full">
-                    <img
-                      src={spot.photo}
-                      alt={spot.address}
-                      className="w-full h-48 object-cover"
-                    />
+                    <div className="w-full h-48 bg-gray-300 flex items-center justify-center overflow-hidden">
+                      <img
+                        src={spot.photo}
+                        alt="Parking spot"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                     <div className="p-4">
                       <div className="flex justify-between items-start mb-2">
                         <h3 className="font-semibold text-primary text-lg">

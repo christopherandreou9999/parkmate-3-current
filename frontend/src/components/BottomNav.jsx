@@ -6,8 +6,7 @@ export default function BottomNav() {
   const navItems = [
     { label: 'Home', icon: '🏠', path: '/search' },
     { label: 'Search', icon: '🔍', path: '/search' },
-    { label: 'Bookings', icon: '📅', path: '/search' },
-    { label: 'Profile', icon: '👤', path: '/search' },
+    { label: 'Profile', icon: '👤', path: '/profile' },
   ];
 
   return (
@@ -19,7 +18,7 @@ export default function BottomNav() {
               key={item.label}
               to={item.path}
               className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition ${
-                location.pathname === item.path
+                location.pathname === item.path || (item.path === '/search' && location.pathname.startsWith('/search'))
                   ? 'text-primary'
                   : 'text-gray-600 hover:text-primary'
               }`}
@@ -33,3 +32,4 @@ export default function BottomNav() {
     </nav>
   );
 }
+
