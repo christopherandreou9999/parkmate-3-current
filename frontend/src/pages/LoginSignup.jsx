@@ -1,15 +1,37 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../supabaseClient';
 
 export default function LoginSignup() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate('/search');
+    setError('');
+    setLoading(true);
+
+    if (isLogin) {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      setLoading(false);
+      if (error) {
+        setError(error.message);
+      } else {
+        navigate('/search');
+      }
+    } else {
+      const { error } = await supabase.auth.signUp({ email, password });
+      setLoading(false);
+      if (error) {
+        setError(error.message);
+      } else {
+        navigate('/search');
+      }
+    }
   };
 
   return (
@@ -61,12 +83,18 @@ export default function LoginSignup() {
               />
             </div>
 
+            {/* Error Message */}
+            {error && (
+              <p className="text-red-600 text-sm text-center">{error}</p>
+            )}
+
             {/* Submit Button - Solid Navy */}
             <button
               type="submit"
-              className="w-full bg-primary text-white font-semibold py-2 rounded-lg hover:bg-opacity-90 transition mt-6"
+              disabled={loading}
+              className="w-full bg-primary text-white font-semibold py-2 rounded-lg hover:bg-opacity-90 transition mt-6 disabled:opacity-50"
             >
-              {isLogin ? 'Log In' : 'Create Account'}
+              {loading ? 'Please wait...' : isLogin ? 'Log In' : 'Create Account'}
             </button>
           </form>
 
@@ -95,6 +123,15 @@ export default function LoginSignup() {
             >
               {isLogin ? 'Sign up' : 'Log in'}
             </button>
+          </p>
+
+          {/* Privacy Policy Link */}
+          <p className="text-center mt-4 text-gray-500 text-xs">
+            Please{' '}
+            <a href="#" className="hover:underline">
+              click here
+            </a>
+            {' '}to view our Privacy Policy
           </p>
         </div>
       </div>
